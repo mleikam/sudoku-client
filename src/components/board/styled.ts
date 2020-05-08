@@ -1,40 +1,101 @@
 import styled from 'styled-components'
-import { DIMENSIONS } from '../../constants';
+import { DIMENSION } from '../../constants';
+import { CELL_DISPLAY_FLAGS, GRID_CLASS_NAMES } from '../../constants';
+
+const {TOP, BOTTOM, LEFT, RIGHT} = GRID_CLASS_NAMES; 
+const { SELECTED, CORRECT, WRONG, LOCKED, HIGHLIGHT, NOTES_HIGHLIGHT } = CELL_DISPLAY_FLAGS;
 
 const cellSize = 40;
 const borderSize = 1;
 const minorGridColor = "#ccc"
 const majorGridColor = '#666'
+
+const gridWidth = (cellSize+borderSize*2)*(DIMENSION)
+const gridHeight = (cellSize+borderSize*2)*(DIMENSION)
+
+const normalColor = '#222';
+const notesColor = '#3aa';
+
 export const StyledGrid = styled.div` 
-  border: 2px solid black; 
-  width: ${(cellSize+borderSize*2)*(DIMENSIONS.WIDTH)}px;
+  border: 2px solid ${normalColor};
+  width: ${gridWidth}px;
+  height: ${gridHeight}px;
+  background: #eee; 
+  text-align:center;
+  &.withNotes {
+    border-color: ${notesColor};
+  }
 `;
 
 export const StyledRow = styled.div`
+  display:flex;
 `;
 
-export const StyledCell = styled.div`
+export const StyledCellContainer = styled.div`
   width: ${cellSize}px; 
   height: ${cellSize}px;
-  display: inline-block; 
+  display: inline-block;
   border: ${borderSize}px solid ${minorGridColor}; 
-  text-align: center;
-  line-height: ${cellSize}px;
-  font-size: ${cellSize*.8}px;
-  font-family: Arial,sans-serif; 
-  &.selected {
-    background-color: yellow; 
-  }
-  &.topBorder {
+  &.${TOP} {
     border-top-color: ${majorGridColor};
   }
-  &.bottomBorder {
+  &.${BOTTOM} {
     border-bottom-color: ${majorGridColor};
   }
-  &.leftBorder {
+  &.${LEFT} {
     border-left-color: ${majorGridColor};
   }
-  &.rightBorder {
+  &.${RIGHT} {
     border-right-color: ${majorGridColor};
   }
+`
+const BaseCell = styled.div`
+  width: ${cellSize}px; 
+  height: ${cellSize}px;
+  text-align: center;
+  font-family: Arial,sans-serif;
+  background-color: #fff;
+  color: #222;
+  &.${SELECTED} {
+    // background-color: #ff0;
+    background-color:     #d5ffaa    ;  
+  }
 `;
+
+export const StyledCell = styled(BaseCell)`
+  line-height: ${cellSize}px;
+  font-size: ${cellSize*.8}px;
+  cursor: pointer; 
+  &.${LOCKED} {
+    background-color: #fff;
+    cursor: default;
+  }
+  &.${WRONG} {
+    background-color: #a66;
+  }
+  &.${CORRECT} {
+    // background-color: #6a6;
+  };
+  &.${HIGHLIGHT}:not(.${WRONG}) {
+    // background-color: #ff9; 
+    background-color: #ffd5aa;
+
+  }
+`;
+
+export const StyledNotes = styled(BaseCell)`
+  & > span {
+    color: ${notesColor}; 
+    width: ${cellSize/3}px;
+    height: ${cellSize/3}px;
+    display: inline-block;
+    float:left;
+    line-height: ${cellSize/3*.8}px;
+    font-size: ${cellSize/3*.8}px;
+  }
+  &.${NOTES_HIGHLIGHT} {
+    // background-color: #ffc; 
+    background-color: #ffa;
+    // background-color: #aaf; 
+  }  
+`

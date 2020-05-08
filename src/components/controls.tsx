@@ -1,5 +1,14 @@
 import React from 'react';
 
-const Controls:React.FC = () => <div>Controls</div>
+interface Props {
+  isNotation:boolean,
+  onModeToggle: () => void,
+}
+
+const getModeLabel = (isNotation:boolean) => isNotation ? "Exit Notes" : "Use Notes"
+
+const Controls:React.FC<Props> = ({isNotation, onModeToggle}) => (<div>
+  <button onClick={onModeToggle}>{getModeLabel(isNotation)}</button>
+</div>)
 
 export default Controls; 

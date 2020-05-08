@@ -18,13 +18,21 @@ export const loadSuccessful = () => ({
   payload: MODE.ENTER
 })
 
+export const setMode = (mode:string) => ({
+  type: types.SET_MODE,
+  payload: mode
+})
+
 export const setCellValue = (selectedCell:number[],value:string) => ({
   type: types.SET_CELL_VALUE,
   payload: value,
-  meta: selectedCell
+  meta: {
+    selected: selectedCell
+  }
 })
 
 export const setSelectedCell = (config:number[]) => ({
   type: types.SET_SELECTED_CELL,
-  payload: config
+  payload: config,
+  meta: {}
 })

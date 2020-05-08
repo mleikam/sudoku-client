@@ -1,4 +1,4 @@
-import { DIMENSIONS } from '../constants';
+import { DIMENSION } from '../constants';
 import { BoardConfig } from '../types/boardState'
 import { getColumnIndex, getRowIndex } from './coordinates';
 
@@ -9,7 +9,7 @@ export const boardIsLoaded = (board:BoardConfig) => {
 
 const removeWhitespace = (s:string) => s.replace(/[\s]+/g,'')
 
-const configIsValid = (cfg:Array<string>) => cfg.length === DIMENSIONS.HEIGHT * DIMENSIONS.WIDTH;
+const configIsValid = (cfg:Array<string>) => cfg.length === DIMENSION * DIMENSION;
 
 const dimensionalizeArray = (arr:string[],width:number,height:number) => {
   const parsed = []
@@ -26,13 +26,13 @@ export const parseBoardConfig = (config:string|undefined):Array<any>|undefined =
   const clean = removeWhitespace(config)
   const arrConfig = clean.split('');
   if( configIsValid(arrConfig)===false ) return undefined;
-  return dimensionalizeArray(arrConfig,DIMENSIONS.WIDTH,DIMENSIONS.HEIGHT);
+  return dimensionalizeArray(arrConfig,DIMENSION,DIMENSION);
 }
 
 export const outOfBounds = (coords:number[]) => {
   const row = getRowIndex(coords);
   const col = getColumnIndex(coords);
-  if(row < 0 || row >= DIMENSIONS.HEIGHT) return true;
-  if(col < 0 || col >= DIMENSIONS.WIDTH) return true;
+  if(row < 0 || row >= DIMENSION) return true;
+  if(col < 0 || col >= DIMENSION) return true;
   return false;
 }

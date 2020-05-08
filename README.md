@@ -7,13 +7,17 @@ Set the .env variable to point to a backend
 ## @todo
 
 * tests
-* notation mode
-* feedback on whether a guess is correct
-* check to see whether a board is done
-* cell coordinate comparison utility
-* rework of key handler
 * documentation
-* ? passing state to cells / cell container ?
-* matching value highlights
-* loading ui
+* clear notes when row- or col- or cage- guess is made
+* undo
+* constraints on notes
 
+## done
+* feedback on whether a guess is correct
+* rework of key handler
+* impelement cell container
+* loading ui
+* notation mode
+* cell coordinate comparison utility
+* matching value (sibling) highlights
+* check to see whether a board is done

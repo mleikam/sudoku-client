@@ -1,8 +1,8 @@
 import React from 'react';
 import useEventListener from '../util/useEventListener'
-import { setSelectedCell, setCellValue } from '../redux/actions';
+import { setSelectedCell, setCellValue, setMode } from '../redux/actions';
 import { getSelectedCell } from '../redux/selectors'
-import { NO_CELL_SELECTED, EMPTY_CELL_VALUE } from '../constants';
+import { NO_CELL_SELECTED, EMPTY_CELL_VALUE, MODE } from '../constants';
 import { getColumnIndex, getRowIndex } from '../util/coordinates';
 
 // keyCodes:
@@ -12,6 +12,10 @@ import { getColumnIndex, getRowIndex } from '../util/coordinates';
 // 38: up
 // 39: right
 // 40: down
+// 16 : shift key (at least one of them)
+const SHIFT = 16;
+const DELETE = 8;
+const ESCAPE = 27;
 
 const getNewCellCoordinates = (selectedCell:number[],keyCode:number) => {
   let dx = 0;
@@ -32,12 +36,19 @@ const getNewCellCoordinates = (selectedCell:number[],keyCode:number) => {
   }
   return [getRowIndex(selectedCell)+dy,getColumnIndex(selectedCell)+dx]
 }
+    // if(isNotation){ dispatch(setMode(MODE.ENTER)) } else { dispatch(setMode(MODE.NOTE)) }
 
 // we pass in the store here as a way to get at the getState
 // using selectors doesn't work because this is only mounted once so 
 // it never re-fetches
 const KeyboardController:React.FC<{store:any}> = ({children,store}) => {
-  const handler:(e:any) => void = (e) => {
+  const keyUpHandler: (e:any) => void = (e) => {
+    const { keyCode } = e; 
+    if ( keyCode===SHIFT){
+      store.dispatch( setMode(MODE.ENTER) )
+    }
+  }  
+  const keyDownHandler:(e:any) => void = (e) => {
     const selectedCell = getSelectedCell(store.getState());
     const { keyCode } = e; 
 // console.log(keyCode)
@@ -49,15 +60,18 @@ const KeyboardController:React.FC<{store:any}> = ({children,store}) => {
       // move the selected cell
       const newlySelected = getNewCellCoordinates(selectedCell,keyCode)
       store.dispatch( setSelectedCell(newlySelected) )
-    } else if (keyCode===27){
+    } else if (keyCode===ESCAPE){
       // escape
       store.dispatch( setSelectedCell(NO_CELL_SELECTED) )
-    } else if (keyCode===8){
+    } else if (keyCode===DELETE){
       // delete
       store.dispatch( setCellValue(selectedCell,EMPTY_CELL_VALUE) )
+    } else if ( keyCode===SHIFT){
+      store.dispatch( setMode(MODE.NOTE) )
     }
   }
-  useEventListener('keydown', handler);
+  useEventListener('keydown', keyDownHandler);
+  useEventListener('keyup', keyUpHandler);
   return <React.Fragment>{children}</React.Fragment>
 }
 
