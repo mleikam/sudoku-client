@@ -5,7 +5,9 @@ import { modeIsNormal } from '../../util/mode'
 import { getCoordinateSlug } from '../../util/coordinates'
 import { cloneObject } from '../../util/object';
 import { getNotesForCell, toggleNoteValue, cellHasNotes } from './noteHelpers';
-import { EMPTY_CELL_VALUE } from '../../constants'
+import { 
+  // EMPTY_CELL_VALUE, 
+  CLEAR_CELL_VALUE } from '../../constants'
 
 const noteReducer = (state = initialState[keys.NOTES], action:Action) => {
   const { type, payload, meta } = action;
@@ -17,7 +19,8 @@ const noteReducer = (state = initialState[keys.NOTES], action:Action) => {
       const { selected } = meta;
       const slug = getCoordinateSlug(selected)
       const newState = cloneObject(state);
-      if( payload === EMPTY_CELL_VALUE){ // delete all notes
+//      if( payload === EMPTY_CELL_VALUE){ // delete all notes
+      if( payload === CLEAR_CELL_VALUE){ // delete all notes
         return {
           ...newState,
           [slug]: undefined

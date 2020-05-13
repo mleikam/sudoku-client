@@ -1,5 +1,5 @@
 import * as types from '../actions/actionTypes'
-import { initialState, keys } from '../store/initialState'
+import { initialState, keys, statKeys } from '../store/initialState'
 import { Action } from '../../types/action'
 import { cloneObject } from '../../util/object';
 import { EMPTY_CELL_VALUE } from '../../constants';
@@ -10,17 +10,34 @@ const increment = (obj:any,attr:string,n:number=1) => {
   return obj[attr] += n
 }
 
+const getPrefilledCount  = (initial:any) => initial.match(/[^.]/g).length;
+
+const setPuzzleReducer = (state:any,prefilledCount:number) => ({
+  ...state,
+  [statKeys.FILLED]: increment(state,statKeys.FILLED,prefilledCount),
+  [statKeys.START]: new Date().toLocaleString()
+})
+
+const cellValueReducer = (state:any,isCorrect:boolean) => {
+  if(isCorrect){
+    return {
+      ...state,
+      [statKeys.FILLED]: increment(state,statKeys.FILLED),
+    }
+  }
+  return {
+    ...state,
+    [statKeys.ERRORS]: increment(state,statKeys.ERRORS),
+  }
+}
+
 const statisticsReducer = (state = initialState[keys.STATS], action:Action) => {
   const {type, payload, meta} = action;
-  const oldState = cloneObject(state);
+  const newState = cloneObject(state);
   switch (type) {
-    case types.SET_PUZZLE: { 
-      const prefilledCount = payload.initial.match(/[^.]/g).length
-      return {
-        ...oldState,
-        filled: increment(oldState,'filled',prefilledCount),
-        startTime: new Date().toLocaleString()
-      }
+    case types.SET_PUZZLE: {
+      const prefilledCount = getPrefilledCount(payload.initial)
+      return setPuzzleReducer(newState,prefilledCount);
     }
     case types.SET_CELL_VALUE:{
       if(modeIsNotation(action)){
@@ -29,17 +46,7 @@ const statisticsReducer = (state = initialState[keys.STATS], action:Action) => {
       if(payload === EMPTY_CELL_VALUE){
         return state;
       }
-      if(meta.correct){
-        return {
-          ...oldState,
-          filled: increment(oldState,'filled'),
-        }
-      } else {
-        return {
-          ...oldState,
-          errorsMade: increment(oldState,'errorsMade'),
-        }
-      }
+      return cellValueReducer(newState,meta.correct);
     }
   }
   return state;

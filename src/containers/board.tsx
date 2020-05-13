@@ -6,7 +6,7 @@ import { boardIsLoaded } from '../util/parseBoard';
 import Loader from '../components/loader';
 import Completed from '../components/complete'
 
-const DisplayComponent = React.lazy(() => import('../components/board'));
+const BoardComponent = React.lazy(() => import('../components/board'));
 
 const BoardContainer: React.FC  = () => {
   const dispatch = useDispatch();
@@ -43,7 +43,7 @@ const BoardContainer: React.FC  = () => {
     <Suspense fallback={<div>...</div>}>
       <React.Fragment>
       {isComplete && <Completed />}
-      <DisplayComponent board={board} notesAreActive={notesAreActive}/>
+      <BoardComponent board={board} notesAreActive={notesAreActive}/>
       </React.Fragment>
     </Suspense>
   );

@@ -5,9 +5,6 @@ import { setSelectedCell } from '../redux/actions'
 import { Cell, CellWrapper, Notes } from  '../components/board/cell';
 import { getClassNames, getGridClassName } from './cellHelpers'
 
-// import { getValueAtCell, getSelectedCell } from '../redux/selectors'
-
-
 interface CellContainerProps {
   value: string,
   row: number,

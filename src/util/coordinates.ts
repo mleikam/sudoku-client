@@ -19,3 +19,4 @@ export const coordinateSlugToIndices = (slug:string) => {
   const values = slug.split(slugDelimiter);
   return values.map( (n:string) => parseInt(n,10) );
 }
+

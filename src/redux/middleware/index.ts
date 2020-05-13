@@ -1,8 +1,12 @@
 import { getPuzzle } from '../../api'
-import { updatePuzzle } from '../actions'
+import { updatePuzzle, showBlocked, 
+  clearBlocked 
+} from '../actions'
 import * as types from '../actions/actionTypes'
 import { getValueAtCell, getMode } from '../selectors';
-import { MODE } from '../../constants';
+import { MODE, EMPTY_CELL_VALUE, CLEAR_CELL_VALUE, FLASH_TIMEOUT } from '../../constants';
+import { getCoordinateSlug } from '../../util/coordinates';
+import { getSiblings } from '../../util/parseBoard';
 
 const puzzleLoader = (state:any) => (next:any) => (action:any) => {
   const { type } = action;
@@ -56,25 +60,43 @@ const modeRouter = (state:any) => (next:any) => (action:any) => {
   return next(action)
 }
 
-// const highlighter = (state:any) => (next:any) => (action:any) => {
-//   const { type, payload: selected } = action;
-//   if(type===types.SET_SELECTED_CELL){
-//     const { user: userValue } = getValueAtCell(state.getState(),selected)
-//     return next({
-//       ...action,
-//       meta: {
-//         ...action.meta,
-//         highlight: userValue
-//       }
-//     });
-//   }
-//   return next(action)
-// }
+// if the value should not be allowed, rewrites the action 
+// @todo: use coord slugs
+const valueIsBlocked = (state:any) => (next:any) => (action:any) => {
+  const { type, meta, payload: value } = action;
+  if(type===types.SET_CELL_VALUE && value!==CLEAR_CELL_VALUE){
+    const { selected } = meta; 
+    const { row, column, cage } = getSiblings(selected);
+    const cellsToCheck = [...row, ...column, ...cage];
+    const getValue = getValueAtCell(state.getState());
+    const blockingCells:string[] = []
+    for(let i=0;i<cellsToCheck.length;i++){
+      const cell = cellsToCheck[i];
+      const { user } = getValue(cell);
+      if(user===value){
+        blockingCells.push(getCoordinateSlug(cell))
+      }
+    }
+    if(blockingCells.length > 0){
+      state.dispatch( showBlocked(blockingCells) )
+      setTimeout(()=>{
+        state.dispatch( clearBlocked() )
+      },FLASH_TIMEOUT)
+      return next({...action,payload: EMPTY_CELL_VALUE});
+    }
+  }
+  return next(action)
+}
 
-export default [
+const middleware = [
   puzzleLoader,
   modeRouter,
   guessIsCorrect,
-  // highlighter,
-  logger
+  valueIsBlocked,
 ];
+
+if(process.env.REACT_APP_LOGGING_ENABLED==='true'){
+  middleware.push(logger)
+}
+
+export default middleware;

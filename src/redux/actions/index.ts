@@ -36,3 +36,13 @@ export const setSelectedCell = (config:number[]) => ({
   payload: config,
   meta: {}
 })
+
+export const showBlocked = (cells:string[]) => ({
+  type: types.SET_FLASH_CELL,
+  payload: cells,
+})
+
+export const clearBlocked = () => ({
+  type: types.CLEAR_FLASH_CELL,
+  payload: null,
+})

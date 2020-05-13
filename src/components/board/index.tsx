@@ -48,7 +48,7 @@ const Grid:React.FC<GridProps> = ({data,notesAreActive}) => {
 }
 
 export const Board:React.FC<Props> = ({board, notesAreActive}) => {
-  const { difficulty, user } = board; 
+  const { difficulty, user } = board;
   if(!difficulty || !user){
     return null; 
   }

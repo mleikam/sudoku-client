@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyledCell, StyledNotes, StyledCellContainer } from './styled';
-import { EMPTY_CELL_VALUE } from '../../constants';
+import { EMPTY_CELL_VALUE , CLEAR_CELL_VALUE } from '../../constants';
 
 interface CellProps {
   value:string,
@@ -20,7 +20,8 @@ interface CellWrapperProps {
 
 export const displayValue = (value:string) => {
   // console.log('displayValue',value,typeof value)
-  return value=== EMPTY_CELL_VALUE ? <span>&nbsp;</span> : value;
+  // return value=== EMPTY_CELL_VALUE ? <span>&nbsp;</span> : value;
+  return [EMPTY_CELL_VALUE,CLEAR_CELL_VALUE].includes(value) ? <span>&nbsp;</span> : value;
 };
 
 export const CellWrapper:React.FC<CellWrapperProps> = ({onClick,className,children}) => (

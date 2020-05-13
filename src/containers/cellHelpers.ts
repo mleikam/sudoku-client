@@ -1,9 +1,11 @@
-
 import { CELL_DISPLAY_FLAGS, GRID_CLASS_NAMES, EMPTY_CELL_VALUE, PUZZLE_KEYS } from '../constants';
 import { rowAndColumnMatchCoordinates } from '../util/coordinates';
 
 const {TOP, BOTTOM, LEFT, RIGHT} = GRID_CLASS_NAMES; 
-const { SELECTED, CORRECT, WRONG, HIGHLIGHT, NOTES_HIGHLIGHT } = CELL_DISPLAY_FLAGS; 
+const { 
+  SELECTED, CORRECT, WRONG, 
+  HIGHLIGHT, NOTES_HIGHLIGHT, FLASH_HIGHLIGHT,
+} = CELL_DISPLAY_FLAGS; 
 const { INITIAL, USER, SOLUTION} = PUZZLE_KEYS; 
 
 export const getGridClassName = (row:number,col:number) => {
@@ -45,6 +47,9 @@ export const getClassNames = (
   }
   if( flags[NOTES_HIGHLIGHT] ){
     classes.push(NOTES_HIGHLIGHT)
+  }
+  if( flags[FLASH_HIGHLIGHT] ){
+    classes.push(FLASH_HIGHLIGHT)
   }
   return classes.join(' ')
 }

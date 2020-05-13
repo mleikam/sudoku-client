@@ -2,7 +2,9 @@ import React from 'react';
 import useEventListener from '../util/useEventListener'
 import { setSelectedCell, setCellValue, setMode } from '../redux/actions';
 import { getSelectedCell } from '../redux/selectors'
-import { NO_CELL_SELECTED, EMPTY_CELL_VALUE, MODE } from '../constants';
+import { NO_CELL_SELECTED, 
+  // EMPTY_CELL_VALUE, 
+  CLEAR_CELL_VALUE, MODE } from '../constants';
 import { getColumnIndex, getRowIndex } from '../util/coordinates';
 
 // keyCodes:
@@ -36,7 +38,6 @@ const getNewCellCoordinates = (selectedCell:number[],keyCode:number) => {
   }
   return [getRowIndex(selectedCell)+dy,getColumnIndex(selectedCell)+dx]
 }
-    // if(isNotation){ dispatch(setMode(MODE.ENTER)) } else { dispatch(setMode(MODE.NOTE)) }
 
 // we pass in the store here as a way to get at the getState
 // using selectors doesn't work because this is only mounted once so 
@@ -50,8 +51,7 @@ const KeyboardController:React.FC<{store:any}> = ({children,store}) => {
   }  
   const keyDownHandler:(e:any) => void = (e) => {
     const selectedCell = getSelectedCell(store.getState());
-    const { keyCode } = e; 
-// console.log(keyCode)
+    const { keyCode } = e;
     if(keyCode >=49 && keyCode <= 57){
       // set the cell value
       const value = String(keyCode-48); // keycode for 1 is 49
@@ -65,7 +65,7 @@ const KeyboardController:React.FC<{store:any}> = ({children,store}) => {
       store.dispatch( setSelectedCell(NO_CELL_SELECTED) )
     } else if (keyCode===DELETE){
       // delete
-      store.dispatch( setCellValue(selectedCell,EMPTY_CELL_VALUE) )
+      store.dispatch( setCellValue(selectedCell,CLEAR_CELL_VALUE) )
     } else if ( keyCode===SHIFT){
       store.dispatch( setMode(MODE.NOTE) )
     }

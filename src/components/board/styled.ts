@@ -3,7 +3,11 @@ import { DIMENSION } from '../../constants';
 import { CELL_DISPLAY_FLAGS, GRID_CLASS_NAMES } from '../../constants';
 
 const {TOP, BOTTOM, LEFT, RIGHT} = GRID_CLASS_NAMES; 
-const { SELECTED, CORRECT, WRONG, LOCKED, HIGHLIGHT, NOTES_HIGHLIGHT } = CELL_DISPLAY_FLAGS;
+const { 
+  SELECTED, CORRECT, WRONG, LOCKED, HIGHLIGHT, 
+  FLASH_HIGHLIGHT, 
+  NOTES_HIGHLIGHT 
+} = CELL_DISPLAY_FLAGS;
 
 const cellSize = 40;
 const borderSize = 1;
@@ -74,12 +78,12 @@ export const StyledCell = styled(BaseCell)`
     background-color: #a66;
   }
   &.${CORRECT} {
-    // background-color: #6a6;
   };
   &.${HIGHLIGHT}:not(.${WRONG}) {
-    // background-color: #ff9; 
     background-color: #ffd5aa;
-
+  }
+  &.${FLASH_HIGHLIGHT} {
+    background-color: #faa; 
   }
 `;
 
@@ -94,8 +98,6 @@ export const StyledNotes = styled(BaseCell)`
     font-size: ${cellSize/3*.8}px;
   }
   &.${NOTES_HIGHLIGHT} {
-    // background-color: #ffc; 
     background-color: #ffa;
-    // background-color: #aaf; 
   }  
 `

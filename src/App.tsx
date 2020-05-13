@@ -2,6 +2,7 @@ import React from 'react';
 import { Page, Header, Footer } from './components/layout'
 import ControlsContainer from './containers/controls'
 import BoardContainer from './containers/board'
+// import Trigger from './temp/trigger'
 
 const App = () => (
   <Page>
@@ -11,5 +12,6 @@ const App = () => (
     <Footer />
   </Page>
 );
+    // <Trigger />
 
 export default App;

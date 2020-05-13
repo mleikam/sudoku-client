@@ -1,11 +1,12 @@
 import { combineReducers } from 'redux'
 import { keys } from '../store/initialState';
 
-import puzzle from './puzzle'
-import mode from './mode'
+import puzzle from './puzzle';
+import mode from './mode';
 import cellSelection from './cellSelection';
-import statistics from './stats'
-import notes from './note'
+import statistics from './stats';
+import notes from './note';
+import flash from './flash';
 
 export default combineReducers({
   [keys.PUZZLE]: puzzle,
@@ -13,4 +14,5 @@ export default combineReducers({
   [keys.SELECTED_CELL]: cellSelection,
   [keys.STATS]: statistics,
   [keys.NOTES]: notes,
+  [keys.FLASH]: flash,
 })

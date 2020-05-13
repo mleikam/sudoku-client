@@ -1,7 +1,8 @@
 import { keys } from '../store/initialState'
 import { 
-  MODE, PUZZLE_KEYS , CELL_DISPLAY_FLAGS, EMPTY_CELL_VALUE, 
-DIMENSION 
+  MODE, PUZZLE_KEYS , CELL_DISPLAY_FLAGS, 
+  CLEAR_CELL_VALUE, EMPTY_CELL_VALUE, 
+  DIMENSION 
 } from '../../constants'
 import { 
   getColumnIndex, 
@@ -10,7 +11,7 @@ import {
   coordinatesMatch 
 } from '../../util/coordinates';
 
-const { HIGHLIGHT, SELECTED, NOTES_HIGHLIGHT } = CELL_DISPLAY_FLAGS; 
+const { HIGHLIGHT, SELECTED, NOTES_HIGHLIGHT, FLASH_HIGHLIGHT } = CELL_DISPLAY_FLAGS; 
 
 export const getMode = (store:any) => store[keys.MODE];
 
@@ -19,6 +20,7 @@ export const isNotationMode = (store:any) => getMode(store) === MODE.NOTE;
 export const boardIsLoading = (store:any) => getMode(store) === MODE.LOAD;
 
 export const getPuzzle = (store:any) => store[keys.PUZZLE]
+export const getUserPuzzle = (store:any) => getPuzzle(store)[PUZZLE_KEYS.USER];
 
 export const getSelectedCell = (store:any) => store[keys.SELECTED_CELL]
 
@@ -52,7 +54,11 @@ export const puzzleIsComplete = (store:any) => {
 }
 
 const isHighlighted = (values:any,selectedValue:string) => {
-  return (values.user === selectedValue && selectedValue !==EMPTY_CELL_VALUE);
+  // return (values.user === selectedValue && selectedValue !==EMPTY_CELL_VALUE);
+  return (
+    values.user === selectedValue && 
+    [EMPTY_CELL_VALUE,CLEAR_CELL_VALUE].includes(selectedValue)===false
+  );
 }
 
 const cellHasMatchingNote = (store:any,coords:number[],value:string) => {
@@ -74,7 +80,18 @@ export const getCellFlags = (store:any) => {
       [HIGHLIGHT]: (coordinatesMatch(coords,selectedCell)===false && isHighlighted(values,selectedValue) ),
       [NOTES_HIGHLIGHT]: cellHasMatchingNote(store,coords,selectedValue),
       [SELECTED]: selectedCell,
+      [FLASH_HIGHLIGHT]: cellInFlashList(store)(coords),
       showErrors,
     })
   }
 }
+
+export const getFlashCells = (store:any) => {
+  return store[keys.FLASH]
+}
+export const cellInFlashList = (store:any) => (coords:number[]) => {
+  const flashes = getFlashCells(store);
+  const slug = getCoordinateSlug(coords);
+  return flashes.includes(slug)
+}
+
