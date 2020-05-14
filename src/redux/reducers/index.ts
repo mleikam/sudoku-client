@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux'
+import { combineReducers } from 'redux';
 import { keys } from '../store/initialState';
 
 import puzzle from './puzzle';
@@ -15,4 +15,4 @@ export default combineReducers({
   [keys.STATS]: statistics,
   [keys.NOTES]: notes,
   [keys.FLASH]: flash,
-})
+});

@@ -1,53 +1,51 @@
 import React, { useEffect, Suspense } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getPuzzle, boardIsLoading, isNotationMode, puzzleIsComplete } from '../redux/selectors'
-import { loadPuzzle, loadSuccessful } from '../redux/actions'
-import { boardIsLoaded } from '../util/parseBoard';
+import { boardIsLoading, puzzleIsComplete, getDifficulty } from '../redux/selectors';
+import { loadPuzzle, loadSuccessful } from '../redux/actions';
 import Loader from '../components/loader';
-import Completed from '../components/complete'
+import Completed from '../components/complete';
 
 const BoardComponent = React.lazy(() => import('../components/board'));
 
-const BoardContainer: React.FC  = () => {
+const BoardContainer: React.FC = () => {
   const dispatch = useDispatch();
-  const board: any = useSelector(getPuzzle)
-  const loaded: boolean = boardIsLoaded(board); 
+  const difficulty = useSelector(getDifficulty);
+  const loaded: boolean = difficulty !== undefined;
   const isLoading: boolean = useSelector(boardIsLoading);
-  const notesAreActive: boolean = useSelector(isNotationMode);
   const isComplete: boolean = useSelector(puzzleIsComplete);
 
-  useEffect( () => {
+  useEffect(() => {
     let subscribed = true;
-    if(subscribed && loaded){
-      dispatch( loadSuccessful() )      
+    if (subscribed && loaded) {
+      dispatch(loadSuccessful());
     }
     return () => {
       subscribed = false;
-    }
-  },[loaded, dispatch])
+    };
+  }, [loaded, dispatch]);
 
-  useEffect( () => {
+  useEffect(() => {
     let subscribed = true;
-    if(subscribed && !loaded){
-      dispatch( loadPuzzle() )
+    if (subscribed && !loaded) {
+      dispatch(loadPuzzle());
     }
     return () => {
       subscribed = false;
-    }
-  },[loaded, dispatch])
+    };
+  }, [loaded, dispatch]);
 
-  if( isLoading ){
-    return <Loader />
+  if (isLoading) {
+    return <Loader />;
   }
   return (
     <Suspense fallback={<div>...</div>}>
-      <React.Fragment>
-      {isComplete && <Completed />}
-      <BoardComponent board={board} notesAreActive={notesAreActive}/>
-      </React.Fragment>
+      <>
+        {isComplete && <Completed />}
+        <BoardComponent />
+      </>
     </Suspense>
   );
-}
+};
 
 
-export default BoardContainer; 
+export default BoardContainer;

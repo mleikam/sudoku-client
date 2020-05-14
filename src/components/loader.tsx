@@ -1,6 +1,6 @@
 import React from 'react';
-import {StyledGrid} from './board/styled'
+import { StyledGrid } from './styled';
 
-const Loader:React.FC = () => <StyledGrid>Loading...</StyledGrid>
+const Loader:React.FC = () => <StyledGrid>Loading...</StyledGrid>;
 
-export default Loader; 
+export default Loader;

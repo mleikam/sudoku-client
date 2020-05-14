@@ -4,4 +4,3 @@ export interface Action {
   payload: any,
   meta?: any
 }
-

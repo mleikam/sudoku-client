@@ -1,21 +1,23 @@
-import styled from 'styled-components'
-import { DIMENSION } from '../../constants';
-import { CELL_DISPLAY_FLAGS, GRID_CLASS_NAMES } from '../../constants';
+import styled from 'styled-components';
+import { DIMENSION, CELL_DISPLAY_FLAGS, GRID_CLASS_NAMES } from '../constants';
 
-const {TOP, BOTTOM, LEFT, RIGHT} = GRID_CLASS_NAMES; 
-const { 
-  SELECTED, CORRECT, WRONG, LOCKED, HIGHLIGHT, 
-  FLASH_HIGHLIGHT, 
-  NOTES_HIGHLIGHT 
+
+const {
+  TOP, BOTTOM, LEFT, RIGHT,
+} = GRID_CLASS_NAMES;
+const {
+  SELECTED, CORRECT, WRONG, LOCKED, HIGHLIGHT,
+  FLASH_HIGHLIGHT,
+  NOTES_HIGHLIGHT,
 } = CELL_DISPLAY_FLAGS;
 
 const cellSize = 40;
 const borderSize = 1;
-const minorGridColor = "#ccc"
-const majorGridColor = '#666'
+const minorGridColor = '#ccc';
+const majorGridColor = '#666';
 
-const gridWidth = (cellSize+borderSize*2)*(DIMENSION)
-const gridHeight = (cellSize+borderSize*2)*(DIMENSION)
+const gridWidth = (cellSize + borderSize * 2) * (DIMENSION);
+const gridHeight = (cellSize + borderSize * 2) * (DIMENSION);
 
 const normalColor = '#222';
 const notesColor = '#3aa';
@@ -26,9 +28,6 @@ export const StyledGrid = styled.div`
   height: ${gridHeight}px;
   background: #eee; 
   text-align:center;
-  &.withNotes {
-    border-color: ${notesColor};
-  }
 `;
 
 export const StyledRow = styled.div`
@@ -52,7 +51,7 @@ export const StyledCellContainer = styled.div`
   &.${RIGHT} {
     border-right-color: ${majorGridColor};
   }
-`
+`;
 const BaseCell = styled.div`
   width: ${cellSize}px; 
   height: ${cellSize}px;
@@ -61,14 +60,13 @@ const BaseCell = styled.div`
   background-color: #fff;
   color: #222;
   &.${SELECTED} {
-    // background-color: #ff0;
     background-color:     #d5ffaa    ;  
   }
 `;
 
 export const StyledCell = styled(BaseCell)`
   line-height: ${cellSize}px;
-  font-size: ${cellSize*.8}px;
+  font-size: ${cellSize * 0.8}px;
   cursor: pointer; 
   &.${LOCKED} {
     background-color: #fff;
@@ -90,14 +88,14 @@ export const StyledCell = styled(BaseCell)`
 export const StyledNotes = styled(BaseCell)`
   & > span {
     color: ${notesColor}; 
-    width: ${cellSize/3}px;
-    height: ${cellSize/3}px;
+    width: ${cellSize / 3}px;
+    height: ${cellSize / 3}px;
     display: inline-block;
     float:left;
-    line-height: ${cellSize/3*.8}px;
-    font-size: ${cellSize/3*.8}px;
+    line-height: ${(cellSize / 3) * 0.8}px;
+    font-size: ${(cellSize / 3) * 0.8}px;
   }
   &.${NOTES_HIGHLIGHT} {
     background-color: #ffa;
   }  
-`
+`;

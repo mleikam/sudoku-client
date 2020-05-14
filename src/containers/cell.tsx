@@ -1,34 +1,48 @@
-import React from 'react';
+import React, { ReactElement, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCellFlags, getCellNotes } from '../redux/selectors'
-import { setSelectedCell } from '../redux/actions'
-import { Cell, CellWrapper, Notes } from  '../components/board/cell';
-import { getClassNames, getGridClassName } from './cellHelpers'
+import { makeCellNotes, makeUserValueAtCell } from '../redux/selectors';
+import { setSelectedCell } from '../redux/actions';
+import { Cell, CellWrapper, Notes } from '../components/cell';
+import {
+  getClassNames, getGridClassName, shouldShowNotes, useFlags,
+} from './cellHelpers';
 
 interface CellContainerProps {
-  value: string,
   row: number,
   col: number
 }
-
-const shouldShowNotes = (value:string,notes?:boolean[]) => (value==="." && Array.isArray(notes));
-
-const getDisplayComponent = (showNotes:boolean) => showNotes ? Notes : Cell; 
-
-const CellContainer:React.FC<CellContainerProps> = ({value,row,col}) => {
-  const dispatch = useDispatch()
-  const flags = useSelector(getCellFlags)([row,col]);
-  const onClick = () => dispatch(setSelectedCell([row,col]));
-  const className = getClassNames(row,col,value,flags);
-  const gridClassName = getGridClassName(row,col)
-  const notes = useSelector(getCellNotes)([row,col]);
-  const showNotes = shouldShowNotes(value,notes)
-  const Display = getDisplayComponent(showNotes)
-  return (
-    <CellWrapper className={gridClassName} onClick={onClick}>
-      <Display className={className} notes={notes} value={value} />
-    </CellWrapper>
-  );
+interface CellWrapperProps {
+  children: ReactElement,
+  gridClassName: string,
+  onClick: () => void
 }
 
-export default CellContainer; 
+const CellContent:React.FC<CellContainerProps> = ({ row, col }) => {
+  const coords = [row, col];
+
+  const cellValueSelector = makeUserValueAtCell(coords);
+  const value = useSelector(cellValueSelector);
+  const notes = useSelector(makeCellNotes(coords));
+  const flags = useFlags(coords, value, notes);
+  const className = getClassNames(row, col, value, flags);
+  const showNotes = shouldShowNotes(value, notes);
+
+  const CellDisplay = useCallback(() => <Cell className={className} value={value} />, [className, value]);
+  const NotesDisplay = useCallback(() => <Notes className={className} notes={notes} />, [className, notes]);
+
+  return showNotes ? <NotesDisplay /> : <CellDisplay />;
+};
+
+const CellContainer:React.FC<CellContainerProps> = ({ row, col }) => {
+  const coords = [row, col];
+  const dispatch = useDispatch();
+  const onClick = () => dispatch(setSelectedCell(coords));
+  const gridClassName = getGridClassName(row, col);
+  return (
+    <CellWrapper className={gridClassName} onClick={onClick}>
+      <CellContent row={row} col={col} />
+    </CellWrapper>
+  );
+};
+
+export default CellContainer;

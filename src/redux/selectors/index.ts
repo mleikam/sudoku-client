@@ -1,17 +1,16 @@
-import { keys } from '../store/initialState'
-import { 
-  MODE, PUZZLE_KEYS , CELL_DISPLAY_FLAGS, 
-  CLEAR_CELL_VALUE, EMPTY_CELL_VALUE, 
-  DIMENSION 
-} from '../../constants'
-import { 
-  getColumnIndex, 
-  getRowIndex, 
-  getCoordinateSlug, 
-  coordinatesMatch 
+import { createSelector } from 'reselect';
+import { keys } from '../store/initialState';
+import {
+  MODE, PUZZLE_KEYS,
+  EMPTY_CELL_VALUE,
+  DIMENSION,
+} from '../../constants';
+import {
+  getColumnIndex,
+  getRowIndex,
+  getCoordinateSlug,
+  coordinatesMatch,
 } from '../../util/coordinates';
-
-const { HIGHLIGHT, SELECTED, NOTES_HIGHLIGHT, FLASH_HIGHLIGHT } = CELL_DISPLAY_FLAGS; 
 
 export const getMode = (store:any) => store[keys.MODE];
 
@@ -19,79 +18,68 @@ export const isNotationMode = (store:any) => getMode(store) === MODE.NOTE;
 
 export const boardIsLoading = (store:any) => getMode(store) === MODE.LOAD;
 
-export const getPuzzle = (store:any) => store[keys.PUZZLE]
+export const getPuzzle = (store:any) => store[keys.PUZZLE];
 export const getUserPuzzle = (store:any) => getPuzzle(store)[PUZZLE_KEYS.USER];
 
-export const getSelectedCell = (store:any) => store[keys.SELECTED_CELL]
+export const getDifficulty = createSelector(
+  [getPuzzle],
+  (puzzle) => puzzle[PUZZLE_KEYS.DIFFICULTY],
+);
+
 
 export const getValueAtCell = (store:any) => (coords:number[]) => {
   const puzzle = getPuzzle(store);
   const row = getRowIndex(coords);
   const col = getColumnIndex(coords);
-  if( [row,col].includes(-1) ){
+  if ([row, col].includes(-1)) {
     return {
       [PUZZLE_KEYS.INITIAL]: undefined,
       [PUZZLE_KEYS.USER]: undefined,
-      [PUZZLE_KEYS.SOLUTION]: undefined
-    }
+      [PUZZLE_KEYS.SOLUTION]: undefined,
+    };
   }
   return {
     [PUZZLE_KEYS.INITIAL]: puzzle[PUZZLE_KEYS.INITIAL][row][col],
     [PUZZLE_KEYS.USER]: puzzle[PUZZLE_KEYS.USER][row][col],
-    [PUZZLE_KEYS.SOLUTION]: puzzle[PUZZLE_KEYS.SOLUTION][row][col]
-  }
-}
+    [PUZZLE_KEYS.SOLUTION]: puzzle[PUZZLE_KEYS.SOLUTION][row][col],
+  };
+};
+export const makeUserValueAtCell = (coords:number[]) => createSelector([getValueAtCell], ((getValueFn) => getValueFn(coords)[PUZZLE_KEYS.USER]));
 
-export const shouldShowErrors = (store:any) => true; // @todo for controls
+export const getSelectedCell = (store:any) => store[keys.SELECTED_CELL];
+export const getSelectedValue = createSelector(
+  [getSelectedCell, (store:any) => store],
+  (coords:number[], store:any) => {
+    const selectedValue = makeUserValueAtCell(coords)(store);
+    return selectedValue;
+  },
+);
 
-export const getCellNotes = (store:any) => (coords:number[]) => {
-  const slug = getCoordinateSlug(coords); 
-  return store[keys.NOTES][slug]
-}
+export const makeUserValueMatchesSelectedValue = (coords:number[]) => createSelector(
+  [makeUserValueAtCell(coords), getSelectedValue],
+  (userValue:string, selectedValue:string) => {
+    if (selectedValue === EMPTY_CELL_VALUE || userValue === EMPTY_CELL_VALUE) return false;
+    const matches = userValue === selectedValue;
+    return matches;
+  },
+);
+export const makeIsSelectedCell = (coords:number[]) => createSelector(
+  [getSelectedCell],
+  (selectedCell) => coordinatesMatch(selectedCell, coords),
+);
 
-export const puzzleIsComplete = (store:any) => {
-  return store[keys.STATS].filled === DIMENSION*DIMENSION;
-}
+export const shouldShowErrors = () => true; // @todo for controls
 
-const isHighlighted = (values:any,selectedValue:string) => {
-  // return (values.user === selectedValue && selectedValue !==EMPTY_CELL_VALUE);
-  return (
-    values.user === selectedValue && 
-    [EMPTY_CELL_VALUE,CLEAR_CELL_VALUE].includes(selectedValue)===false
-  );
-}
+export const makeCellNotes = (coords:number[]) => (store:any) => {
+  const slug = getCoordinateSlug(coords);
+  return store[keys.NOTES][slug] || [];
+};
 
-const cellHasMatchingNote = (store:any,coords:number[],value:string) => {
-  const index = parseInt(value,10)-1
-  const noteStore = getCellNotes(store)(coords)
-  const hasNote = noteStore===undefined ? false : noteStore[index]
-  return hasNote
-}
+export const puzzleIsComplete = (store:any) => store[keys.STATS].filled === DIMENSION * DIMENSION;
 
-export const getCellFlags = (store:any) => {
-  const getValueAt = getValueAtCell(store);
-  const showErrors = shouldShowErrors(store);
-  const selectedCell: number[] = getSelectedCell(store); 
-  const selectedValue: string = getValueAt(selectedCell)[PUZZLE_KEYS.USER];
-  return (coords:number[])  => {
-    const values =  getValueAt(coords);
-    return ({
-      ...values,
-      [HIGHLIGHT]: (coordinatesMatch(coords,selectedCell)===false && isHighlighted(values,selectedValue) ),
-      [NOTES_HIGHLIGHT]: cellHasMatchingNote(store,coords,selectedValue),
-      [SELECTED]: selectedCell,
-      [FLASH_HIGHLIGHT]: cellInFlashList(store)(coords),
-      showErrors,
-    })
-  }
-}
-
-export const getFlashCells = (store:any) => {
-  return store[keys.FLASH]
-}
-export const cellInFlashList = (store:any) => (coords:number[]) => {
+export const getFlashCells = (store:any) => store[keys.FLASH];
+export const cellInFlashList = (coords:number[]) => (store:any) => {
   const flashes = getFlashCells(store);
   const slug = getCoordinateSlug(coords);
-  return flashes.includes(slug)
-}
-
+  return flashes.includes(slug);
+};
