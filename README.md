@@ -15,9 +15,10 @@ Set the .env variable to point to a backend
 ## done
 * feedback on whether a guess is correct
 * rework of key handler
-* impelement cell container
+* implement cell container
 * loading ui
 * notation mode
 * cell coordinate comparison utility
 * matching value (sibling) highlights
 * check to see whether a board is done
+* limit re-rendering
