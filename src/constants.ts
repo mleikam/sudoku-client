@@ -24,12 +24,12 @@ export const CELL_DISPLAY_FLAGS = {
   FLASH_HIGHLIGHT: 'flash',
 };
 
-export const PUZZLE_KEYS = {
-  SOLUTION: 'solution',
-  USER: 'user',
-  INITIAL: 'initial',
-  DIFFICULTY: 'difficulty',
-};
+export enum PUZZLE_KEYS {
+  SOLUTION = 'solution',
+  USER = 'user',
+  INITIAL = 'initial',
+  DIFFICULTY = 'difficulty',
+}
 
 export const GRID_CLASS_NAMES = {
   TOP: 'topBorder',

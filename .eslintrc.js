@@ -21,11 +21,12 @@ module.exports = {
       "json": "always"
     }],
     "no-plusplus": 0,
-    "import/prefer-default-export": 1, 
+    "import/prefer-default-export": 0, 
     "max-len": 1,
     "default-case": 0,
     "react/prop-types": 0,
     "react/no-array-index-key": 1, 
+    "no-underscore-dangle": 0,
   },
   "overrides": [
     {

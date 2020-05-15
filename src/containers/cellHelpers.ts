@@ -1,15 +1,16 @@
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import {
-  makeUserValueMatchesSelectedValue,
+  userValueMatchesSelectedValue,
   getValueAtCell,
   makeIsSelectedCell,
-  getSelectedValue, cellInFlashList,
+  cellInFlashList,
+  notesMatchSelectedValue,
 } from '../redux/selectors';
 
 
 import {
-  EMPTY_CELL_VALUE, CLEAR_CELL_VALUE, CELL_DISPLAY_FLAGS, GRID_CLASS_NAMES, PUZZLE_KEYS,
+  EMPTY_CELL_VALUE, CELL_DISPLAY_FLAGS, GRID_CLASS_NAMES, PUZZLE_KEYS,
 } from '../constants';
 
 const {
@@ -75,16 +76,13 @@ export const cellHasMatchingNote = (noteStore:any, value:string) => {
   return hasNote;
 };
 
-export const useFlags = (coords:number[], value:string, notes:any) => {
-  const matchSelector = makeUserValueMatchesSelectedValue(coords);
-  const matches = useSelector(matchSelector);
-  const values = useSelector((store:any) => getValueAtCell(store)(coords));
-  const isSelected = useSelector(makeIsSelectedCell(coords));
-  const selectedValue = useSelector(getSelectedValue);
-  const inFlashList = useSelector(cellInFlashList(coords));
-  const notesMatch = cellHasMatchingNote(notes, selectedValue);
-  const selectedNotEmpty = [EMPTY_CELL_VALUE, CLEAR_CELL_VALUE].includes(selectedValue) === false;
-  const highlight = !isSelected && matches && selectedNotEmpty;
+export const useFlags = (coords:number[]) => {
+  const notesMatch = useSelector((store:any) => notesMatchSelectedValue(store, coords));
+  const values = useSelector((store:any) => getValueAtCell(store, coords));
+  const matches = useSelector((store:any) => userValueMatchesSelectedValue(store, coords));
+  const isSelected = useSelector((store:any) => makeIsSelectedCell(store, coords));
+  const inFlashList = useSelector((store:any) => cellInFlashList(store, coords));
+  const highlight = matches && !isSelected;
   return useMemo(() => ({
     ...values,
     [HIGHLIGHT]: highlight,

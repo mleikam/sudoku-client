@@ -10,6 +10,7 @@ import {
 } from '../../constants';
 import { getCoordinateSlug } from '../../util/coordinates';
 import { getSiblings } from '../../util/parseBoard';
+import logger from './logger';
 
 const puzzleLoader = (state:any) => (next:any) => (action:any) => {
   const { type } = action;
@@ -21,22 +22,11 @@ const puzzleLoader = (state:any) => (next:any) => (action:any) => {
   return next(action);
 };
 
-function logger(state:any) {
-  return (next:any) => (action:any) => {
-    console.group(action.type);
-    console.log('action:', action);
-    const returnValue = next(action);
-    console.log('new state:', state.getState());
-    console.groupEnd();
-    return returnValue;
-  };
-}
-
 const guessIsCorrect = (state:any) => (next:any) => (action:any) => {
   const { type, payload: guess, meta } = action;
   if (type === types.SET_CELL_VALUE && meta.mode === MODE.ENTER) {
     const { selected } = meta;
-    const { solution, user } = getValueAtCell(state.getState())(selected);
+    const { solution, user } = getValueAtCell(state.getState(), selected);
     return next({
       ...action,
       meta: {
@@ -71,11 +61,12 @@ const valueIsBlocked = (state:any) => (next:any) => (action:any) => {
     const { selected } = meta;
     const { row, column, cage } = getSiblings(selected);
     const cellsToCheck = [...row, ...column, ...cage];
-    const getValue = getValueAtCell(state.getState());
+    // const getValue = getValueAtCell(state.getState());
     const blockingCells:string[] = [];
     for (let i = 0; i < cellsToCheck.length; i++) {
       const cell = cellsToCheck[i];
-      const { user } = getValue(cell);
+      // const { user } = getValue(cell);
+      const { user } = getValueAtCell(state.getState(), cell);
       if (user === value) {
         blockingCells.push(getCoordinateSlug(cell));
       }

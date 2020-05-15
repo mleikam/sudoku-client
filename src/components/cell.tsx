@@ -26,9 +26,15 @@ export const CellWrapper:React.FC<CellWrapperProps> = ({ onClick, className, chi
   </StyledCellContainer>
 );
 
+const notesMap = (exists:boolean, index:number) => {
+  const blank = <span key={index}>&nbsp;</span>;
+  const full = <span key={index}>{index + 1}</span>;
+  return exists ? full : blank;
+};
+
 export const Notes: React.FC<NotesProps> = ({ notes, className }) => (
   <StyledNotes className={`notes ${className}`}>
-    {notes.map((exists:boolean, index:number) => (exists ? <span key={index}>{index + 1}</span> : <span key={index}>&nbsp;</span>))}
+    {notes.map(notesMap)}
   </StyledNotes>
 );
 
